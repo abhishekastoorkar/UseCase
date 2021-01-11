@@ -2,11 +2,11 @@ const dbOptions = require('../configs/db.config');
 const knex = require('knex')(dbOptions.options);
 const { ErrorHandler } = require('../helper/error');
 
-//Function to get all roles
-getRole = async () => {
-  let res = [];
-  //result will store role specific data
-  result = await knex('role')
+// Function to get all roles
+const getRole = async () => {
+  const res = [];
+  // result will store role specific data
+  const result = await knex('role')
     .join('role_permissions', 'role.ID', 'role_permissions.ROLE_ID')
     .join('permission', 'role_permissions.PERMISSION_ID', 'permission.ID')
     .select([
@@ -14,34 +14,35 @@ getRole = async () => {
       'ROLE.NAME as name',
       'ROLE.DESCRIPTION as description ',
       'ROLE.STATUS as status',
-      knex.raw('GROUP_CONCAT(PERMISSION.ID) as permissions'),
+      knex.raw('GROUP_CONCAT(PERMISSION.ID) as permissions')
     ])
     .groupBy('role.ID');
-  data = { ['roles']: result };
+  const data = { roles: result };
 
   // getPermissions function will return permissions depend on permissionIds
-  getPermissions = async (id) => {
-    result = await knex.raw(
-      `select ID, NAME, DESCRIPTION  from permission where FIND_IN_SET(id, '${id}')`
+  const getPermissions = async (id) => {
+    const permissions = await knex.raw(
+      `select ID as id, NAME as name, DESCRIPTION as description from permission where FIND_IN_SET(id, '${id}')`
     );
-    return result[0];
+    return permissions[0];
   };
 
   for (let i = 0; i < result.length; i++) {
     res.push(result[i].permissions);
   }
 
-  //will fetch permissions and add it result json
+  // will fetch permissions and add it result json
   for (let i = 0; i < res.length; i++) {
-    let permissions = await getPermissions(res[i]);
+    const permissions = await getPermissions(res[i]);
     data.roles[i].permissions = permissions;
   }
 
   return data;
 };
 
-//Function to get create a role
-createRole = async (role) => {
+// Function to get create a role
+const createRole = async (role) => {
+  let inserts = [];
   const result = await knex('role')
     .select('NAME')
     .where({ ENTERPRISE_CODE: role.enterpriseCode });
@@ -58,13 +59,13 @@ createRole = async (role) => {
         NAME: role.name,
         DESCRIPTION: role.description,
         ENTERPRISE_CODE: role.enterpriseCode,
-        STATUS: role.status,
+        STATUS: role.status
       });
 
       for (let i = 0; i < role.permissionIds.length; i++) {
         inserts = await trx('role_permissions').insert({
           ROLE_ID: ids,
-          PERMISSION_ID: role.permissionIds[i],
+          PERMISSION_ID: role.permissionIds[i]
         });
       }
       return inserts.length + ' new role saved';
@@ -74,12 +75,12 @@ createRole = async (role) => {
   }
 };
 
-//Function to get a specific role by id
-getRoleByIdentifier = async (id) => {
-  let res = [];
+// Function to get a specific role by id
+const getRoleByIdentifier = async (id) => {
+  const res = [];
   let permissions;
-  let permission = [];
-  result = await knex('role')
+  const permission = [];
+  const result = await knex('role')
     .join('role_permissions', 'role.ID', 'role_permissions.ROLE_ID')
     .join('permission', 'role_permissions.PERMISSION_ID', 'permission.ID')
     .select([
@@ -87,23 +88,28 @@ getRoleByIdentifier = async (id) => {
       'ROLE.NAME as name',
       'ROLE.DESCRIPTION as description ',
       'ROLE.STATUS as status',
-      knex.raw('GROUP_CONCAT(PERMISSION.ID) as permissionsByFeature'),
+      knex.raw('GROUP_CONCAT(PERMISSION.ID) as permissionsByFeature')
     ])
     .where({ 'role.ID': id });
 
-  let data = result[0];
-  getPermissions = async (id) => {
-    result = await knex.raw(
+  const data = result[0];
+  const getPermissions = async (id) => {
+    const result = await knex.raw(
       `select GROUP_CONCAT(PERMISSION.FEATURE) as Feature from permission where FIND_IN_SET(id, '${id}') group by(FEATURE) `
     );
     return result[0];
   };
-  getPermissionsByFeature = async (features) => {
+  const getPermissionsByFeature = async (features) => {
     const result = await knex('permission')
       .where({
-        FEATURE: features,
+        FEATURE: features
       })
-      .select('ID', 'NAME', 'DESCRIPTION', 'STATUS');
+      .select(
+        'ID as id',
+        'NAME as name',
+        'DESCRIPTION as description',
+        'STATUS as status'
+      );
     return { [features]: result };
   };
 
@@ -123,18 +129,40 @@ getRoleByIdentifier = async (id) => {
   return data;
 };
 
-//Function to delete a role
-deleteRole = async (id) => {
+// Function to delete a role
+const deleteRole = async (id) => {
   const result = await knex('role')
     .where({ ID: id })
     .andWhere({ STATUS: 'A' })
     .update({ STATUS: 'D' });
-  console.log(result);
   return result;
 };
+
+const updateRole = async (id, data) => {
+  await knex('role_permissions').where({ ROLE_ID: id }).del();
+  const result = await knex('role')
+    .where({ ID: id })
+    .andWhere({ STATUS: 'A' })
+    .update({
+      NAME: data.name,
+      DESCRIPTION: data.description,
+      LAST_UPDATE_DATE: new Date()
+    });
+
+  for (let i = 0; i < data.permissionIds.length; i++) {
+    await knex('role_permissions').insert({
+      ROLE_ID: id,
+      PERMISSION_ID: data.permissionIds[i],
+      LAST_UPDATE_DATE: new Date()
+    });
+  }
+  return result;
+};
+
 module.exports = {
   getRole: getRole,
   createRole: createRole,
   getRoleByIdentifier: getRoleByIdentifier,
   deleteRole: deleteRole,
+  updateRole: updateRole
 };

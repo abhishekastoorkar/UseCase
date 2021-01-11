@@ -1,0 +1,441 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Identity Access Management system",
+        "description": "RestAPI for Identity Access Management system",
+        "contact": {
+            "name": "Abhishek Astoorkar",
+            "email": "abhishek.astoorkar@hppiestminds.com"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000/idm/api",
+            "description": "Local server"
+        }
+    ],
+    "paths": {
+        "/permissions": {
+            "get": {
+                "summary": "Get all permission",
+                "tags": [
+                    "permission"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get all permissions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/responses/permissions"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/permissions/search": {
+            "get": {
+                "summary": "Get all permissions for specific feature",
+                "tags": [
+                    "permission"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "feature",
+                        "type": "string",
+                        "description": "features name"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/responses/permissions"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/roles": {
+            "post": {
+                "tags": [
+                    "role"
+                ],
+                "summary": "Create a new role",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/createRole"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Role created successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/responses/createRoleResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "role"
+                ],
+                "summary": "Get all roles",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/responses/roles"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/roles/{id}": {
+            "get": {
+                "tags": [
+                    "role"
+                ],
+                "summary": "Get a specifc role and associated permissions by role id",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "type": "integer",
+                        "description": "role id"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/responses/rolePermissionObject"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/responses/notFound"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "role"
+                ],
+                "summary": "Update a role and its associated permissions",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "type": "integer",
+                        "description": "role id "
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/createRole"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "role created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/responses/createRoleResponse"
+                                },
+                                "example": {
+                                    "code": 200,
+                                    "message": "Role updated successfully.",
+                                    "applicationErrorCode": 0
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "role"
+                ],
+                "summary": "Delete role",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "type": "integer",
+                        "description": "role id "
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "role deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/responses/createRoleResponse"
+                                },
+                                "example": {
+                                    "code": 200,
+                                    "message": "Role deleted successfully.",
+                                    "applicationErrorCode": 0
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "createRole": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "name of role "
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "enterpriseCode": {
+                        "type": "string"
+                    },
+                    "permissionIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "description": "permissions to that role"
+                    }
+                },
+                "example": {
+                    "name": "BA Entities Role",
+                    "description": "Roles for CRUD Operations",
+                    "enterpriseCode": "XXXX-XXXX-XXXX-XXXX",
+                    "permissionIds": [
+                        1,
+                        2,
+                        3
+                    ]
+                }
+            }
+        },
+        "responses": {
+            "createRoleResponse": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "description": "status code "
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "success message from response"
+                    },
+                    "applicationErrorCode": {
+                        "type": "integer"
+                    }
+                },
+                "example": {
+                    "code": 201,
+                    "message": "Role created successfully.",
+                    "applicationErrorCode": 0
+                }
+            },
+            "permissions": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "integer"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "description": {
+                            "type": "string"
+                        },
+                        "status": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "example": {
+                    "User": [
+                        {
+                            "id": 1,
+                            "name": "user_add",
+                            "description": "add user",
+                            "status": "A"
+                        },
+                        {
+                            "id": 2,
+                            "name": "user_update",
+                            "description": "update user",
+                            "status": "A"
+                        }
+                    ]
+                }
+            },
+            "roles": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "integer"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "description": {
+                            "type": "string"
+                        },
+                        "status": {
+                            "type": "string"
+                        },
+                        "permissions": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "integer"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "example": {
+                    "roles": [
+                        {
+                            "id": 1,
+                            "name": "BA Entities Role",
+                            "description": "Roles for CRUD Operations",
+                            "status": "A",
+                            "permissions": [
+                                {
+                                    "id": 2,
+                                    "name": "resource_add",
+                                    "description": "Add Resource",
+                                    "status": "A"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "rolePermissionObject": {
+                "type": "object",
+                "properties": {
+                    "role_id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "permissionByFeature": {
+                        "type": "object",
+                        "schema": {
+                            "$ref": "#/components/responses/permissions"
+                        }
+                    }
+                },
+                "example": {
+                    "id": 1,
+                    "name": "BA Entities Role",
+                    "description": "Roles for CRUD Operations",
+                    "status": "A",
+                    "permissionByFeature": [
+                        {
+                            "User": [
+                                {
+                                    "id": 1,
+                                    "name": "user_add",
+                                    "description": "add user",
+                                    "status": "A"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "notFound": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "httpCode": {
+                        "type": "integer"
+                    }
+                },
+                "example": {
+                    "code": "error",
+                    "message": "Unable to get role",
+                    "httpCode": 404
+                }
+            }
+        }
+    },
+    "securitySchemes": {
+        "api_key": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "Authorization"
+        }
+    }
+}

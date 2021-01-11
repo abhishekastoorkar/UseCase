@@ -1,35 +1,44 @@
 const dbOptions = require('../configs/db.config');
 const knex = require('knex')(dbOptions.options);
 
-//Function to get all permissions
-getAllPermissions = async () => {
+// Function to get all permissions
+const getAllPermissions = async () => {
   const result = await knex('permission').distinct('FEATURE');
-  let feature = [];
+  const feature = [];
 
-  async function permissions(i) {
+  async function permissions (i) {
     const result = await knex('permission')
-      .select('ID', 'NAME', 'DESCRIPTION')
+      .select(
+        'ID as id',
+        'NAME as name',
+        'DESCRIPTION as description',
+        'STATUS as status'
+      )
       .where({ FEATURE: i.FEATURE });
     return result;
   }
   for (let i = 0; i < result.length; i++) {
-    type = result[i].FEATURE;
-    data = await permissions(result[i]);
+    const type = result[i].FEATURE;
+    const data = await permissions(result[i]);
     feature.push({ [type]: data });
   }
   return feature;
 };
 
-//Function to get a specific permission by feature
-getPermissionByFeature = async (features) => {
-  let permission = [];
-  let featureArr = features.split(',');
+// Function to get a specific permission by feature
+const getPermissionByFeature = async (featureArr) => {
+  const permission = [];
   for (let i = 0; i < featureArr.length; i++) {
     const result = await knex('permission')
       .where({
-        FEATURE: featureArr[i],
+        FEATURE: featureArr[i]
       })
-      .select('ID', 'NAME', 'DESCRIPTION', 'STATUS');
+      .select(
+        'ID as id',
+        'NAME as name',
+        'DESCRIPTION as description',
+        'STATUS as status'
+      );
     permission.push({ [featureArr[i]]: result });
   }
 
@@ -38,5 +47,5 @@ getPermissionByFeature = async (features) => {
 
 module.exports = {
   getAllPermissions: getAllPermissions,
-  getPermissionByFeature: getPermissionByFeature,
+  getPermissionByFeature: getPermissionByFeature
 };

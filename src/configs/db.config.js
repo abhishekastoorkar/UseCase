@@ -11,10 +11,10 @@ const options = {
     host: process.env.DB_HOSTNAME,
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
-    database: process.env.DATABASE_NAME,
-  },
+    database: process.env.DATABASE_NAME
+  }
 };
 
 module.exports = {
-  options: options,
+  options: options
 };

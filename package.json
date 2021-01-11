@@ -4,22 +4,29 @@
   "description": "usecase development",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "test": "semistandard ",
+    "start": "nodemon index.js",
+    "semifix": "semistandard --fix"
   },
   "author": "abhishek_astoorkar",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^2.0.6"
+    "nodemon": "^2.0.6",
+    "semistandard": "^16.0.0"
   },
   "dependencies": {
+    "crypto-random-string": "^3.3.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "joi": "^17.3.0",
     "knex": "^0.21.14",
     "lodash": "^4.17.20",
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",
+    "nanoid": "^3.1.20",
+    "swagger-ui-express": "^4.1.6",
     "underscore": "^1.12.0",
+    "uuid": "^8.3.2",
     "winston": "^3.3.3"
   }
 }
