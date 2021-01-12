@@ -6,7 +6,8 @@ const getAllPermissions = async () => {
   const result = await knex('permission').distinct('FEATURE');
   const feature = [];
 
-  async function permissions (i) {
+  // fetching data from permission table for each permission feature
+  async function permissions(i) {
     const result = await knex('permission')
       .select(
         'ID as id',
@@ -17,6 +18,7 @@ const getAllPermissions = async () => {
       .where({ FEATURE: i.FEATURE });
     return result;
   }
+
   for (let i = 0; i < result.length; i++) {
     const type = result[i].FEATURE;
     const data = await permissions(result[i]);

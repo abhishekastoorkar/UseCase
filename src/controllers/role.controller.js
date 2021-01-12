@@ -1,15 +1,17 @@
 const roleModel = require('.././models/role.model');
 const { ErrorHandler } = require('../helper/error');
 
-const getRole = async (req, res, next) => {
+// retrieve al roles from database
+const getRoles = async (req, res, next) => {
   try {
-    const role = await roleModel.getRole();
-    return res.status(200).json(role);
+    const roles = await roleModel.getRoles();
+    return res.status(200).json(roles);
   } catch (error) {
     next(error);
   }
 };
 
+// create new role and save to database
 const createRole = async (req, res, next) => {
   try {
     const data = req.body;
@@ -34,6 +36,7 @@ const createRole = async (req, res, next) => {
   }
 };
 
+// get a role for database by role id
 const getRoleByIdentifier = async (req, res, next) => {
   try {
     const role = await roleModel.getRoleByIdentifier(req.params.id);
@@ -43,6 +46,7 @@ const getRoleByIdentifier = async (req, res, next) => {
   }
 };
 
+// delete role by id
 const deleteRole = async (req, res, next) => {
   try {
     const role = await roleModel.deleteRole(req.params.id);
@@ -59,6 +63,7 @@ const deleteRole = async (req, res, next) => {
   }
 };
 
+// update a specific role data and save to databse
 const updateRole = async (req, res, next) => {
   try {
     const role = await roleModel.updateRole(req.params.id, req.body);
@@ -76,7 +81,7 @@ const updateRole = async (req, res, next) => {
 };
 
 module.exports = {
-  getRole: getRole,
+  getRoles: getRoles,
   createRole: createRole,
   getRoleByIdentifier: getRoleByIdentifier,
   deleteRole: deleteRole,

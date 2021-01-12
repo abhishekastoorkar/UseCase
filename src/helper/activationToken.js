@@ -1,5 +1,6 @@
 var crypto = require('crypto');
 
+// generate activation token which is used to send to the user email
 const getActivationKey = () => {
   return new Promise((resolve, reject) => {
     crypto.randomBytes(32, (err, buf) => {
@@ -9,6 +10,7 @@ const getActivationKey = () => {
   });
 };
 
+// generate salt
 const genRandomString = function (length) {
   return crypto
     .randomBytes(Math.ceil(length / 2))
@@ -16,6 +18,7 @@ const genRandomString = function (length) {
     .slice(0, length); /** return required number of characters */
 };
 
+// generate hased password from user entered password
 const hashFunction = function (password, salt) {
   var hash = crypto.createHmac('sha512', salt);
   hash.update(password);
@@ -26,13 +29,7 @@ const hashFunction = function (password, salt) {
   };
 };
 
-const getHashedPassword = async (newPassword, saltParameter = '0') => {
-  let salt;
-  if (saltParameter === '0') {
-    salt = genRandomString(16);
-  } else {
-    salt = saltParameter;
-  }
+const getHashedPassword = async (newPassword, salt) => {
   function saltHashPassword(userpassword, salt) {
     let passwordData = hashFunction(userpassword, salt);
     return passwordData.passwordHash;
@@ -44,5 +41,6 @@ const getHashedPassword = async (newPassword, saltParameter = '0') => {
 };
 module.exports = {
   getActivationKey: getActivationKey,
-  getHashedPassword: getHashedPassword
+  getHashedPassword: getHashedPassword,
+  genRandomString: genRandomString
 };

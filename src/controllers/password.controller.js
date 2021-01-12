@@ -1,6 +1,7 @@
 const passwordModel = require('.././models/password.model');
 const { ErrorHandler } = require('../helper/error');
 
+// create new password policy and save in database
 const createpassword = async (req, res, next) => {
   try {
     await passwordModel.createpassword(req.body, res, next);
@@ -14,6 +15,7 @@ const createpassword = async (req, res, next) => {
   }
 };
 
+// fetch all password policies
 const getPasswordPolicies = async (req, res, next) => {
   try {
     const passwordPolicy = await passwordModel.getPasswordPolicies();
@@ -23,6 +25,7 @@ const getPasswordPolicies = async (req, res, next) => {
   }
 };
 
+// activate Password Policy by id
 const activatePasswordPolicy = async (req, res, next) => {
   try {
     const result = await passwordModel.activatePasswordPolicy(
@@ -44,7 +47,7 @@ const activatePasswordPolicy = async (req, res, next) => {
     next(error);
   }
 };
-
+// de-activate Password Policy by id
 const deActivatePasswordPolicy = async (req, res, next) => {
   try {
     const result = await passwordModel.deActivatePasswordPolicy(
@@ -67,6 +70,7 @@ const deActivatePasswordPolicy = async (req, res, next) => {
   }
 };
 
+// delete Password Policy by id
 const deletePasswordPolicy = async (req, res, next) => {
   try {
     const result = await passwordModel.deletePasswordPolicy(
@@ -89,6 +93,7 @@ const deletePasswordPolicy = async (req, res, next) => {
   }
 };
 
+// update password policy and save in database
 const updatePasswordPolicy = async (req, res, next) => {
   try {
     await passwordModel.updatePasswordPolicy(req.body);

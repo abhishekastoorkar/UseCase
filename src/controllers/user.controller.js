@@ -1,6 +1,7 @@
 const userModel = require('.././models/user.model');
 const { ErrorHandler } = require('../helper/error');
 
+// create new user and save to database
 const createUser = async (req, res, next) => {
   try {
     await userModel.createUser(req.body, next);
@@ -14,6 +15,7 @@ const createUser = async (req, res, next) => {
   }
 };
 
+// fetch all users from database
 const listUsers = async (req, res, next) => {
   try {
     const user = await userModel.listUsers();
@@ -23,6 +25,7 @@ const listUsers = async (req, res, next) => {
   }
 };
 
+// delete a user by id
 const deleteUser = async (req, res, next) => {
   try {
     const user = await userModel.deleteUser(req.params.id);
@@ -39,6 +42,7 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
+// suspend a user by id
 const suspendUser = async (req, res, next) => {
   try {
     const result = await userModel.suspendUser(req.params.id, next);
@@ -58,6 +62,7 @@ const suspendUser = async (req, res, next) => {
   }
 };
 
+// activate a user by id
 const activateUser = async (req, res, next) => {
   try {
     const result = await userModel.activateUser(req.params.id, next);
@@ -77,6 +82,7 @@ const activateUser = async (req, res, next) => {
   }
 };
 
+// activate a user by token
 const activateUserByToken = async (req, res, next) => {
   try {
     const result = await userModel.activateUserByToken(
@@ -100,6 +106,7 @@ const activateUserByToken = async (req, res, next) => {
   }
 };
 
+// generate a salt for a user
 const getSalt = async (req, res, next) => {
   try {
     const result = await userModel.getSalt(req.body.username, next);
@@ -112,6 +119,7 @@ const getSalt = async (req, res, next) => {
   }
 };
 
+// to handle forgot password request
 const forgotPassword = async (req, res, next) => {
   try {
     await userModel.forgotPassword(req.body.username, next);
@@ -125,6 +133,7 @@ const forgotPassword = async (req, res, next) => {
   }
 };
 
+// to change a password
 const changePassword = async (req, res, next) => {
   try {
     await userModel.changePassword(req.body, next);
@@ -133,6 +142,38 @@ const changePassword = async (req, res, next) => {
       message: 'Password change sucessfully.',
       applicationErrorCode: 0
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// retrieve all users with respect to enterprise
+const listEnterpriseUsers = async (req, res, next) => {
+  const enterpriseCode = 'irAImQC5U9NhCE';
+  try {
+    const user = await userModel.listEnterpriseUsers(enterpriseCode);
+    return res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// get all users who are already logged-in
+const getLoggedInUser = async (req, res, next) => {
+  const currentDate = new Date(Date.now());
+  try {
+    const user = await userModel.getLoggedInUser(currentDate);
+    return res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// to authenticate the user and generate auth token
+const authenticateUser = async (req, res, next) => {
+  try {
+    const result = await userModel.authenticateUser(req.body, next);
+    return res.status(200).json(result);
   } catch (error) {
     next(error);
   }
@@ -147,5 +188,8 @@ module.exports = {
   activateUserByToken: activateUserByToken,
   getSalt: getSalt,
   forgotPassword: forgotPassword,
-  changePassword: changePassword
+  changePassword: changePassword,
+  listEnterpriseUsers: listEnterpriseUsers,
+  getLoggedInUser: getLoggedInUser,
+  authenticateUser: authenticateUser
 };

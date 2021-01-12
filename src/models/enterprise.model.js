@@ -2,6 +2,7 @@ const dbOptions = require('../configs/db.config');
 const knex = require('knex')(dbOptions.options);
 const { nanoid } = require('nanoid');
 
+// function to create enterprise and save in database
 const createEnterprise = async (data) => {
   const entCode = nanoid(14);
   const permissionIdArray = [];
@@ -27,10 +28,13 @@ const createEnterprise = async (data) => {
         NAME: 'ADMIN',
         ENTERPRISE_CODE: entCode
       });
+      // fetching all permission id's to add all permissions for root user(admin)
       const permissionIds = await trx('permission').select('permission.ID');
+
       for (let i = 0; i < permissionIds.length; i++) {
         permissionIdArray.push(permissionIds[i].ID);
       }
+      // adding new admin role and all permissions in role_permissions table
       for (let i = 0; i < permissionIdArray.length; i++) {
         await trx('role_permissions').insert({
           ROLE_ID: roleId,
@@ -48,11 +52,13 @@ const createEnterprise = async (data) => {
   return entCode;
 };
 
+//  Fetch all entrerprise from database
 const listEnterprise = async () => {
   const nameArray = [];
   let roleNames = [];
   const roleIds = [];
   const roles = [];
+  // Fetching data from enterprise table
   const enterprise = await knex('enterprise').select(
     'enterprise.NAME as name',
     'enterprise.STATUS as status',
@@ -84,25 +90,29 @@ const listEnterprise = async () => {
     .andWhere({ 'user.ENTERPRISE_CODE ': enterprise[0].enterpriseCode })
     .groupBy('user.ID');
 
+  // formatting retrieved data as per required response
   for (let i = 0; i < result.length; i++) {
     result[i].permissionNames = result[i].permissionNames.split(',');
     roles.push(result[i]['roles']);
     delete result[i]['roles'];
   }
 
-  const getPermissionName = async (id) => {
+  // get role name for role id of every enterprise user
+  const getRoleName = async (id) => {
     const roleName = await knex.raw(
       `select ID as id, NAME as name, STATUS as status from role where FIND_IN_SET(ID, '${id}')`
     );
     return roleName[0];
   };
 
+  // formatting data as per required response
   for (let i = 0; i < result.length; i++) {
     const id = roles[i].split(',');
-    const names = await getPermissionName(id);
+    const names = await getRoleName(id);
     nameArray.push(names);
   }
 
+  // adding formatted data into response JSON
   for (let i = 0; i < nameArray.length; i++) {
     for (let j = 0; j < nameArray[i].length; j++) {
       roleNames.push(nameArray[i][j].name);
@@ -112,7 +122,7 @@ const listEnterprise = async () => {
     roleNames = [];
   }
   const ent = JSON.parse(JSON.stringify(enterprise[0]));
-  console.log(ent);
+  // checking activation status of enterprise and changing it's name
   if (ent.status === 'A') {
     ent.status = 'Active';
   } else {
@@ -122,7 +132,9 @@ const listEnterprise = async () => {
   return ent;
 };
 
+// Suspend the enterprise by enterprise id
 const suspendEnterprise = async (id) => {
+  // suspend enterprise if status is active and make changes 'S' in Db
   const result = await knex('enterprise')
     .where({ ID: id })
     .andWhere({ STATUS: 'A' })
@@ -130,18 +142,20 @@ const suspendEnterprise = async (id) => {
   return result;
 };
 
+// Activate the enterprise by id
 const activateEnterprise = async (id) => {
+  // activate enterprise if status is suspended and make changes as 'A' in Db
   const result = await knex('enterprise')
     .where({ ID: id })
-    .andWhere({ STATUS: 'D' })
+    .andWhere({ STATUS: 'S' })
     .update({ STATUS: 'A' });
   return result;
 };
 
+// Delete the enterprise by its id
 const deleteEnterprise = async (id) => {
   const result = await knex('enterprise')
     .where({ ID: id })
-    .andWhere({ STATUS: 'A' })
     .update({ STATUS: 'D' });
   return result;
 };

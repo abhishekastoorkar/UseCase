@@ -8,6 +8,7 @@ const roleRoute = require('./src/routes/role.route');
 const userRoute = require('./src/routes/user.route');
 const enterpriseRoute = require('./src/routes/enterprise.route');
 const passwordRoute = require('./src/routes/password.route');
+const commonRoute = require('./src/routes/common.route');
 
 const { handleError } = require('./src/helper/error');
 const swaggerDocument = require('./swagger.json');
@@ -28,6 +29,7 @@ app.use(api.ROLES, roleRoute);
 app.use(api.USERS, userRoute);
 app.use(api.ENTERPRISES, enterpriseRoute);
 app.use(api.PASSWORDS, passwordRoute);
+app.use(api.API, commonRoute);
 
 app.get('/', (req, res) => {
   res.send('Your are connected to Node.js app');

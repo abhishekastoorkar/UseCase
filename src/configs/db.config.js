@@ -4,7 +4,7 @@ const result = dotenv.config();
 if (result.error) {
   throw result.error;
 }
-
+// database connection options for knex
 const options = {
   client: 'mysql2',
   connection: {

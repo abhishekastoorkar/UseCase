@@ -1,4 +1,4 @@
-const schema = require('./validationSchema');
+const schemas = require('./validationSchema');
 const _ = require('lodash');
 
 const validationOptions = {
@@ -7,11 +7,14 @@ const validationOptions = {
   stripUnknown: true
 };
 
+// validation middleware
+// type = validation schema depend upon which route is invoked.
+// property = it can be [body, params, query]
 const validate = (type, property) => {
-  const sc = _.get(schema, type);
-
+  const schema = _.get(schemas, type);
+  // schema will be depend upon type of route
   return (req, res, next) => {
-    const { error } = sc.validate(req[property], validationOptions);
+    const { error } = schema.validate(req[property], validationOptions);
     const valid = error == null;
 
     if (valid) {

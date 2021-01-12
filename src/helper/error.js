@@ -1,10 +1,12 @@
 class ErrorHandler extends Error {
-  constructor (statusCode, message) {
+  // constructor
+  constructor(statusCode, message) {
     super();
     this.statusCode = statusCode;
     this.message = message;
   }
 }
+// error handler middleware
 const handleError = (err, res) => {
   err.statusCode = err.statusCode || 500;
   err.message = err.message || 'internal server error';

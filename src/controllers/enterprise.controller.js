@@ -1,6 +1,7 @@
 const enterpriseModel = require('.././models/enterprise.model');
 const { ErrorHandler } = require('../helper/error');
 
+// function to create enterprise and save in database
 const createEnterprise = async (req, res, next) => {
   try {
     const entCode = await enterpriseModel.createEnterprise(req.body, next);
@@ -15,6 +16,7 @@ const createEnterprise = async (req, res, next) => {
   }
 };
 
+//  Fetch all entrerprise from database
 const listEnterprise = async (req, res, next) => {
   try {
     const enterprise = await enterpriseModel.listEnterprise();
@@ -24,6 +26,7 @@ const listEnterprise = async (req, res, next) => {
   }
 };
 
+// Suspend the enterprise by enterprise id
 const suspendEnterprise = async (req, res, next) => {
   try {
     const result = await enterpriseModel.suspendEnterprise(req.params.id, next);
@@ -43,6 +46,7 @@ const suspendEnterprise = async (req, res, next) => {
   }
 };
 
+// Activate the enterprise by id
 const activateEnterprise = async (req, res, next) => {
   try {
     const result = await enterpriseModel.activateEnterprise(
@@ -65,6 +69,7 @@ const activateEnterprise = async (req, res, next) => {
   }
 };
 
+// Delete the enterprise by its id
 const deleteEnterprise = async (req, res, next) => {
   try {
     const result = await enterpriseModel.deleteEnterprise(req.params.id, next);

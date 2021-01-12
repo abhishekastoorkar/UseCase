@@ -2,7 +2,8 @@ const { isUndefined } = require('underscore');
 const permissionModel = require('.././models/permission.models');
 const { ErrorHandler } = require('../helper/error');
 
-async function getAllPermissions (req, res, next) {
+// fetch all permissions from database
+async function getAllPermissions(req, res, next) {
   try {
     const permissions = await permissionModel.getAllPermissions();
     return res.status(200).send(permissions);
@@ -11,7 +12,8 @@ async function getAllPermissions (req, res, next) {
   }
 }
 
-async function getPermissionByFeature (req, res, next) {
+// fetch permissions from database by fetures
+async function getPermissionByFeature(req, res, next) {
   const { feature } = req.query;
   try {
     if (isUndefined(feature) | (feature === '')) {
