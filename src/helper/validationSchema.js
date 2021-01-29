@@ -11,7 +11,7 @@ const roleSchema = Joi.object({
 
 // schema for password
 const passwordSchema = Joi.object({
-  id: Joi.number().min(1).required()
+    
 });
 
 module.exports = {

@@ -63,7 +63,9 @@ const getPasswordPolicies = async () => {
     const data = await getData(result[i].policyId);
     // pairing attribute name and value and storing in result
     for (let j = 0; j < data.length; j++) {
-      result[i][data[j].name] = data[j].value;
+      result[i][data[j].name] = isNaN(data[j].value)
+        ? data[j].value
+        : parseInt(data[j].value);
     }
     // checking status og password policy and replacing with proper string
     if (result[i].status === 'S') {

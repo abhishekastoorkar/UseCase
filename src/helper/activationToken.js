@@ -2,7 +2,7 @@ var crypto = require('crypto');
 
 // generate activation token which is used to send to the user email
 const getActivationKey = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     crypto.randomBytes(32, (err, buf) => {
       const activeToken = buf.toString('hex');
       resolve(activeToken);
@@ -34,8 +34,9 @@ const getHashedPassword = async (newPassword, salt) => {
     let passwordData = hashFunction(userpassword, salt);
     return passwordData.passwordHash;
   }
-
+  // hashing password first time
   const hashPassword_1 = saltHashPassword(newPassword, salt);
+  // hashing password second time
   const password = saltHashPassword(hashPassword_1, salt);
   return password;
 };

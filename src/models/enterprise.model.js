@@ -59,11 +59,13 @@ const listEnterprise = async () => {
   const roleIds = [];
   const roles = [];
   // Fetching data from enterprise table
-  const enterprise = await knex('enterprise').select(
-    'enterprise.NAME as name',
-    'enterprise.STATUS as status',
-    'enterprise.ENTERPRISE_CODE as enterpriseCode'
-  );
+  const enterprise = await knex('enterprise')
+    .select(
+      'enterprise.NAME as name',
+      'enterprise.STATUS as status',
+      'enterprise.ENTERPRISE_CODE as enterpriseCode'
+    )
+    .where({ ENTERPRISE_CODE: 'irAImQC5U9NhCE' });
 
   const result = await knex('user')
     .innerJoin('user_roles', 'user.Id', 'user_roles.USER_ID')
@@ -86,7 +88,7 @@ const listEnterprise = async () => {
       knex.raw('GROUP_CONCAT(PERMISSION.NAME) as permissionNames')
     )
     .where({ 'user.STATUS': 'A' })
-    .orWher({ 'user.STATUS': 'S' })
+    .orWhere({ 'user.STATUS': 'S' })
     .andWhere({ 'user.ENTERPRISE_CODE ': enterprise[0].enterpriseCode })
     .groupBy('user.ID');
 

@@ -136,7 +136,7 @@ const forgotPassword = async (req, res, next) => {
 // to change a password
 const changePassword = async (req, res, next) => {
   try {
-    await userModel.changePassword(req.body, next);
+    await userModel.changePassword(req.body, req.userName, next);
     return res.status(200).json({
       code: 200,
       message: 'Password change sucessfully.',

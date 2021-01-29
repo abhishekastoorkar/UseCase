@@ -219,9 +219,9 @@ const forgotPassword = async (username) => {
 };
 
 // to change a password
-const changePassword = async (data) => {
-  // get salt for specific username
-  const salt = await getSaltAndPassword(data.userName);
+const changePassword = async (data, username) => {
+  //get salt for specific username
+  const salt = await getSaltAndPassword(username);
   // check for valid username
   if (!salt.length) {
     throw new ErrorHandler(404, 'Invalid username');
@@ -425,11 +425,11 @@ const authenticateUser = async (data) => {
 
   // formatting response object
   const authUser = {};
-  authUser['token'] = token;
-  authUser['enterpriseCode'] = result[0].enterpriseCode;
-  authUser['userType'] = result[0].userType;
-  authUser['lastLoginDate'] = result[0].lastLoginDate.getTime();
-  authUser['expiration'] = expiry.replace('s', '');
+  authUser.token = token;
+  authUser.enterpriseCode = result[0].enterpriseCode;
+  authUser.userType = result[0].userType;
+  authUser.lastLoginDate = result[0].lastLoginDate.getTime();
+  authUser.expiration = expiry.replace('s', '');
 
   return authUser;
 };
