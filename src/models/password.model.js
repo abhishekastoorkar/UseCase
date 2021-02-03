@@ -1,5 +1,5 @@
-const dbOptions = require('../configs/db.config');
-const knex = require('knex')(dbOptions.options);
+const knex = require('../configs/knex');
+
 const { ErrorHandler } = require('../helper/error'); //** to handle run time errors*/
 
 // create new password policy and save in database

@@ -3,6 +3,7 @@ const { ErrorHandler } = require('../helper/error');
 
 // function to create enterprise and save in database
 const createEnterprise = async (req, res, next) => {
+  console.log('in contr');
   try {
     const entCode = await enterpriseModel.createEnterprise(req.body, next);
     return res.status(201).json({
@@ -18,6 +19,7 @@ const createEnterprise = async (req, res, next) => {
 
 //  Fetch all entrerprise from database
 const listEnterprise = async (req, res, next) => {
+  console.log('in contro');
   try {
     const enterprise = await enterpriseModel.listEnterprise();
     return res.status(200).json(enterprise);
@@ -30,7 +32,7 @@ const listEnterprise = async (req, res, next) => {
 const suspendEnterprise = async (req, res, next) => {
   try {
     const result = await enterpriseModel.suspendEnterprise(req.params.id, next);
-    if (result === 0) {
+    if (!result) {
       throw new ErrorHandler(
         404,
         'Bad request, id does not exist or Enterprise already suspended'
@@ -53,7 +55,7 @@ const activateEnterprise = async (req, res, next) => {
       req.params.id,
       next
     );
-    if (result === 0) {
+    if (!result) {
       throw new ErrorHandler(
         404,
         'Bad request, id does not exist or Enterprise already activated'
@@ -73,7 +75,7 @@ const activateEnterprise = async (req, res, next) => {
 const deleteEnterprise = async (req, res, next) => {
   try {
     const result = await enterpriseModel.deleteEnterprise(req.params.id, next);
-    if (result === 0) {
+    if (!result) {
       throw new ErrorHandler(
         404,
         'Bad request, id does not exist or Enterprise already deleted'

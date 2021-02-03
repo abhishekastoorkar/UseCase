@@ -4,9 +4,18 @@ const roleController = require('.././controllers/role.controller');
 const validate = require('.././helper/validation');
 
 router.get('/', roleController.getRoles);
-router.get('/:id', roleController.getRoleByIdentifier);
+router.get(
+  '/:id',
+  validate('roleId', 'params'),
+  roleController.getRoleByIdentifier
+);
 router.post('/', validate('roleSchema', 'body'), roleController.createRole);
-router.delete('/:id', roleController.deleteRole);
-router.put('/:id', roleController.updateRole);
+router.delete('/:id', validate('roleId', 'params'), roleController.deleteRole);
+router.put(
+  '/:id',
+  validate('roleId', 'params'),
+  validate('roleSchema', 'body'),
+  roleController.updateRole
+);
 
 module.exports = router;

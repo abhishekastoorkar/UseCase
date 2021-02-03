@@ -54,7 +54,7 @@ const deActivatePasswordPolicy = async (req, res, next) => {
       req.params.id,
       next
     );
-    if (result === 0) {
+    if (!result.lenght) {
       throw new ErrorHandler(
         404,
         'Bad request, id does not exist or password policy already deactivated'
@@ -77,7 +77,7 @@ const deletePasswordPolicy = async (req, res, next) => {
       req.params.id,
       next
     );
-    if (result === 0) {
+    if (!result.lenght) {
       throw new ErrorHandler(
         404,
         'Bad request, id does not exist or password policy already deleted'

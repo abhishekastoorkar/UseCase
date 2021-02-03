@@ -1,5 +1,4 @@
-const dbOptions = require('../configs/db.config');
-const knex = require('knex')(dbOptions.options);
+const knex = require('../configs/knex');
 const { ErrorHandler } = require('../helper/error');
 
 // Function to get all roles
@@ -96,6 +95,9 @@ const getRoleByIdentifier = async (id) => {
     ])
     .where({ 'role.ID': id });
   // adding retrieved data into response object
+  if (result[0].id === null) {
+    throw new ErrorHandler(404, 'Bad request, requested id is not valid');
+  }
   const data = result[0];
 
   // fetching and grouping all permission features for each permission id
@@ -150,7 +152,10 @@ const deleteRole = async (id) => {
 // update a specific role data and save to databse
 const updateRole = async (id, data) => {
   // deleting old role permissions
-  await knex('role_permissions').where({ ROLE_ID: id }).del();
+  const resultId = await knex('role_permissions').where({ ROLE_ID: id }).del();
+  if (!resultId.length) {
+    throw new ErrorHandler(404, 'Bad request, requested id is not valid');
+  }
   // updating role name and role description
   const result = await knex('role')
     .where({ ID: id })

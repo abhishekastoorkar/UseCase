@@ -29,7 +29,7 @@ const listUsers = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
   try {
     const user = await userModel.deleteUser(req.params.id);
-    if (user === 0) {
+    if (!user.lenght) {
       throw new ErrorHandler(404, 'Bad request, id does not exist');
     }
     return res.status(200).json({
@@ -45,8 +45,8 @@ const deleteUser = async (req, res, next) => {
 // suspend a user by id
 const suspendUser = async (req, res, next) => {
   try {
-    const result = await userModel.suspendUser(req.params.id, next);
-    if (result === 0) {
+    const user = await userModel.suspendUser(req.params.id, next);
+    if (!user.lenght) {
       throw new ErrorHandler(
         404,
         'Bad request, id does not exist or user already suspended'
@@ -65,8 +65,8 @@ const suspendUser = async (req, res, next) => {
 // activate a user by id
 const activateUser = async (req, res, next) => {
   try {
-    const result = await userModel.activateUser(req.params.id, next);
-    if (result === 0) {
+    const user = await userModel.activateUser(req.params.id, next);
+    if (!user.lenght) {
       throw new ErrorHandler(
         404,
         'Bad request, id does not exist or user already activated'
@@ -136,7 +136,7 @@ const forgotPassword = async (req, res, next) => {
 // to change a password
 const changePassword = async (req, res, next) => {
   try {
-    await userModel.changePassword(req.body, req.userName, next);
+    await userModel.changePassword(req.body, req.body.userName, next);
     return res.status(200).json({
       code: 200,
       message: 'Password change sucessfully.',

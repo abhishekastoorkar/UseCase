@@ -49,8 +49,8 @@ const getRoleByIdentifier = async (req, res, next) => {
 // delete role by id
 const deleteRole = async (req, res, next) => {
   try {
-    const role = await roleModel.deleteRole(req.params.id);
-    if (role === 0) {
+    const result = await roleModel.deleteRole(req.params.id);
+    if (!result.lenght) {
       throw new ErrorHandler(404, 'Bad request, id does not exist');
     }
     return res.status(200).json({
@@ -67,9 +67,6 @@ const deleteRole = async (req, res, next) => {
 const updateRole = async (req, res, next) => {
   try {
     const role = await roleModel.updateRole(req.params.id, req.body);
-    if (role === 0) {
-      throw new ErrorHandler(404, 'Bad request, id does not exist');
-    }
     return res.status(200).json({
       code: 200,
       message: 'Role updated successfully.',

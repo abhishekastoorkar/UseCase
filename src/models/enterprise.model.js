@@ -1,9 +1,9 @@
-const dbOptions = require('../configs/db.config');
-const knex = require('knex')(dbOptions.options);
+const knex = require('../configs/knex');
 const { nanoid } = require('nanoid');
 
 // function to create enterprise and save in database
 const createEnterprise = async (data) => {
+  console.log('in models');
   const entCode = nanoid(14);
   const permissionIdArray = [];
   try {
@@ -146,11 +146,13 @@ const suspendEnterprise = async (id) => {
 
 // Activate the enterprise by id
 const activateEnterprise = async (id) => {
+  console.log(id);
   // activate enterprise if status is suspended and make changes as 'A' in Db
   const result = await knex('enterprise')
     .where({ ID: id })
     .andWhere({ STATUS: 'S' })
     .update({ STATUS: 'A' });
+  console.log(result);
   return result;
 };
 

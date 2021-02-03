@@ -39,6 +39,4 @@ app.use((err, req, res, next) => {
   handleError(err, res);
 });
 
-app.listen(PORT, () => {
-  console.log(`Listening to requests on http://localhost:${PORT}`);
-});
+module.exports = app;

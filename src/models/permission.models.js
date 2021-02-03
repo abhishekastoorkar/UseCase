@@ -1,5 +1,5 @@
-const dbOptions = require('../configs/db.config');
-const knex = require('knex')(dbOptions.options);
+const knex = require('../configs/knex');
+const { ErrorHandler } = require('../helper/error');
 
 // Function to get all permissions
 const getAllPermissions = async () => {
@@ -41,6 +41,12 @@ const getPermissionByFeature = async (featureArr) => {
         'DESCRIPTION as description',
         'STATUS as status'
       );
+    if (result.length === 0) {
+      throw new ErrorHandler(
+        '404',
+        'permssions for one or more features not found'
+      );
+    }
     permission.push({ [featureArr[i]]: result });
   }
 

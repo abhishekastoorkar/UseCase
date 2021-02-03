@@ -1,5 +1,4 @@
-const dbOptions = require('../configs/db.config');
-const knex = require('knex')(dbOptions.options);
+const knex = require('../configs/knex');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -191,6 +190,10 @@ const getSaltAndPassword = async (username) => {
   const result = await knex('user')
     .select('SALT as salt', 'PASSWORD as password')
     .where({ USERNAME: username });
+  // check for valid username
+  if (!result.length) {
+    throw new ErrorHandler(404, 'Invalid username');
+  }
   return result;
 };
 
@@ -222,10 +225,7 @@ const forgotPassword = async (username) => {
 const changePassword = async (data, username) => {
   //get salt for specific username
   const salt = await getSaltAndPassword(username);
-  // check for valid username
-  if (!salt.length) {
-    throw new ErrorHandler(404, 'Invalid username');
-  }
+
   // generate hashed password from user entered password
   const password = await getActivation.getHashedPassword(
     data.password,
@@ -389,9 +389,7 @@ const authenticateUser = async (data) => {
   // get salt for specific username
   const salt = await getSaltAndPassword(data.userName);
   // check for valid username
-  if (!salt.length) {
-    throw new ErrorHandler(404, 'Invalid username');
-  }
+
   // generate hashed password from user entered password
   const password = await getActivation.getHashedPassword(
     data.password,
